@@ -2,12 +2,11 @@ import type AtizapClient from "../config/AtizapClient";
 import { extractInfo } from "../config/modules/infoMessage";
 import { findBestMatch } from "string-similarity";
 import { messageMeths } from "./messageMeths";
-import { Message } from "../config/Types";
 import config from "../../config.json";
 
 export default function handler(zap: AtizapClient) {
     const prefix = config.bot.prefix;
-    const botNumber = zap.atizap.user.id.split(":")[0];
+    const botNumber = zap.atizap.user?.id.split(":")[0];
     zap.atizap.ev.on("messages.upsert", async ({ messages, type }: { messages: any[]; type: string }) => {
         if (type !== "notify") return;
         for (const msg of messages) {
@@ -16,12 +15,12 @@ export default function handler(zap: AtizapClient) {
             msg.message = text;
             msg.quoted = quotedText;
             const from = msg.key.remoteJid
-            const message = messageMeths(zap, msg as Message);
-
+            const message = messageMeths(zap, msg);
             if (!msg.message.toLowerCase().startsWith(prefix) || msg.message.length === prefix.length) {
                 if (!from.endsWith("@g.us") || msg.message === `@${botNumber}`) {
                     return await zap.atizap.sendMessage(from, { text: "Olá!" });
                 };
+                return;
             };
             const args = msg.message.slice(prefix.length).trim().split(/ +/)
             const cmd = args.shift().toLowerCase()
@@ -30,19 +29,16 @@ export default function handler(zap: AtizapClient) {
                 const allCmdsNames: string[] = [];
                 zap.commands.forEach((command) => {
                     if (command.config.category !== "dev") {
-                        allCmdsNames.push(cmd.config.name)
-                        cmd.config.aliases.forEach((alias: string) => allCmdsNames.push(alias))
+                        allCmdsNames.push(command.config.name)
+                        command.config.aliases.forEach((alias: string) => allCmdsNames.push(alias))
                     }
                 });
-
                 const bestMatch = findBestMatch(cmd, allCmdsNames);
-                const suggestion = bestMatch.bestMatch.rating >= 0.6
-                    ? `Você quis dizer: ${bestMatch.bestMatch.target}?`
-                    : "Comando não encontrado!";
-                return await zap.atizap.sendMessage(from, { text: suggestion });
-
+                const suggestion = bestMatch.bestMatch.rating >= 0.2
+                    ? `Opa! Comando não encontrado...\n\nVocê quis dizer: *${bestMatch.bestMatch.target}*?`
+                    : `Opa! Comando não encontrado...\n\nUse ${prefix}ajuda para ver os comandos disponíveis.`;
+                return await message.send(suggestion, { reply: true });
             }
-
 
             const alias = zap.aliases.get(cmd);
             const file = zap.commands.get(cmd) || (alias ? zap.commands.get(alias) : undefined);

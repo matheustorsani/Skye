@@ -1,3 +1,5 @@
+import AtizapClient from "./AtizapClient";
+
 interface options {
     name: string;
     aliases: string[];
@@ -14,7 +16,7 @@ interface options {
 }
 
 export default class Command {
-    zap: any;
+    zap: AtizapClient;
     config: Required<options>;
     amountTimes: number;
 

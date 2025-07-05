@@ -1,4 +1,5 @@
 import { Collection } from '@discordjs/collection'
+import { WASocket } from 'baileys'
 import * as glob from 'glob'
 import path from 'path'
 import Spinnies from 'spinnies'
@@ -30,12 +31,12 @@ interface AtizapClientStartOptions {
 }
 
 export default class AtizapClient {
-  atizap: any
+  atizap: WASocket
   commands: Collection<string, CommandInstance>
   aliases: Collection<string, string>
   spinnies: Spinnies
 
-  constructor(atizap: any) {
+  constructor(atizap: WASocket) {
     this.atizap = atizap
     this.commands = new Collection()
     this.aliases = new Collection()

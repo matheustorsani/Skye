@@ -1,8 +1,9 @@
+import AtizapClient from "../../config/AtizapClient";
 import Command from "../../config/Command";
 import { CommandParams } from "../../config/Types";
 
 export default class PingCommand extends Command {
-    constructor(zap: any) {
+    constructor(zap: AtizapClient) {
         super(zap, {
             name: "ping",
             aliases: ["pong"],
