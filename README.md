@@ -45,7 +45,9 @@ Renomeie o arquivo ```config-example.json``` para ```config.json``` e preencha o
 ```bash
    npm run start
 ```
+
 Após o início, será exibido um QR Code no terminal. Escaneie com seu WhatsApp para conectar.
+
 ⚠️ **Recomendação:** use um número secundário para evitar bloqueios ou situações indesejadas.
 
 ---
