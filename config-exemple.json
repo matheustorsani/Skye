@@ -1,0 +1,13 @@
+{
+    "bot": {
+        "prefix": "prefixo_desejado [ex: !]"
+    },
+    "devs": {
+        "contacts": {
+            "seunome": "seunumero"
+        },
+        "twitter": {
+            "seunome": "url_do_twitter"
+        }
+    }
+}
