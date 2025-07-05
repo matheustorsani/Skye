@@ -37,14 +37,12 @@ Este bot foi originalmente feito em JavaScript usando **@open-wa/wa-automate**, 
 4. Configure o projeto:
 Renomeie o arquivo ```config-example.json``` para ```config.json``` e preencha os campos obrigatórios conforme necessário (como tokens, chaves ou identificadores).
 
-5. Compile o projeto:
+5. Inicie o bot:
 ```bash
-   npm run build
+   npm run dev
 ```
-6. Inicie o bot:
-```bash
-   npm run start
-```
+
+*Você não precisa compilar o codigo para JavaScript, ajuste se necessario.*
 
 Após o início, será exibido um QR Code no terminal. Escaneie com seu WhatsApp para conectar.
 
