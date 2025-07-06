@@ -11,29 +11,36 @@ export default function handler(zap: AtizapClient) {
         if (type !== "notify") return;
         for (const msg of messages) {
             const { text, type, isQuoted, quotedText, sender } = extractInfo(msg);
-            if (!msg.message || msg.key.fromMe) continue;
-            msg.message = text;
-            msg.quoted = quotedText;
+            if (!text || msg.key.fromMe) continue;
             const from = msg.key.remoteJid
+            const user = msg.key.participant || from;
+
+            const usuario = await zap.mongo.usuarios.findById(user);
+            if (!usuario) await zap.mongo.newUserDoc(user).save()
+                .then(() => console.log("Usuário salvo no banco de dados:", user))
+                .catch((err) => console.error("Erro ao salvar usuário no banco de dados:", err));
+
             const message = messageMeths(zap, msg);
-            if (!msg.message.toLowerCase().startsWith(prefix) || msg.message.length === prefix.length) {
-                if (!from.endsWith("@g.us") || msg.message === `@${botNumber}`) {
-                    return await zap.atizap.sendMessage(from, { text: "Olá!" });
+
+            if (!text.toLowerCase().startsWith(prefix)) {
+                if (!from.endsWith("@g.us") || text === `@${botNumber}`) {
+                    return await zap.atizap.sendMessage(from, { text: "Ola" });
                 };
                 return;
             };
-            const args = msg.message.slice(prefix.length).trim().split(/ +/)
-            const cmd = args.shift().toLowerCase()
+
+            const args = text.slice(prefix.length).trim().split(/ +/)
+            const cmd = args.shift()!.toLowerCase()
 
             if (!zap.commands.has(cmd) && !zap.aliases.has(cmd)) {
-                const allCmdsNames: string[] = [];
+                const allcmds: string[] = [];
                 zap.commands.forEach((command) => {
                     if (command.config.category !== "dev") {
-                        allCmdsNames.push(command.config.name)
-                        command.config.aliases.forEach((alias: string) => allCmdsNames.push(alias))
+                        allcmds.push(command.config.name)
+                        command.config.aliases.forEach((alias: string) => allcmds.push(alias))
                     }
                 });
-                const bestMatch = findBestMatch(cmd, allCmdsNames);
+                const bestMatch = findBestMatch(cmd, allcmds);
                 const suggestion = bestMatch.bestMatch.rating >= 0.2
                     ? `Opa! Comando não encontrado...\n\nVocê quis dizer: *${bestMatch.bestMatch.target}*?`
                     : `Opa! Comando não encontrado...\n\nUse ${prefix}ajuda para ver os comandos disponíveis.`;

@@ -20,7 +20,7 @@ export default class Command {
     config: Required<options>;
     amountTimes: number;
 
-    constructor(zap: any, options: options) {
+    constructor(zap: AtizapClient, options: options) {
         this.zap = zap;
 
         this.config = {
@@ -38,5 +38,12 @@ export default class Command {
             isWorking: options.isWorking
         };
         this.amountTimes = 0;
+    }
+
+
+    getAllChats(): any {
+        this.zap.atizap.ev.on('chats.upsert', (chats) => {
+            return chats.map(chat => chat.id);
+        })
     }
 }

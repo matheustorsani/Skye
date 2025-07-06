@@ -3,6 +3,8 @@ import { WASocket } from 'baileys'
 import * as glob from 'glob'
 import path from 'path'
 import Spinnies from 'spinnies'
+import { Database } from './modules/db/database'
+import config from '../../config.json';
 
 type CommandConfig = {
   name: string
@@ -33,6 +35,7 @@ interface AtizapClientStartOptions {
 export default class AtizapClient {
   atizap: WASocket
   commands: Collection<string, CommandInstance>
+  mongo = new Database(config.keys.mongouri)
   aliases: Collection<string, string>
   spinnies: Spinnies
 

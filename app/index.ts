@@ -7,7 +7,6 @@ import makeWASocket, {
     proto
 } from "baileys";
 import { Boom } from "@hapi/boom";
-import * as fs from "fs";
 import * as path from "path";
 import * as qrcode from "qrcode-terminal";
 import AtizapClient from "./config/AtizapClient";
@@ -30,6 +29,7 @@ const initialize = async () => {
 
     const sock = makeWASocket({
         version,
+        syncFullHistory: true,
         auth: {
             creds: state.creds,
             keys: makeCacheableSignalKeyStore(state.keys)
@@ -41,7 +41,6 @@ const initialize = async () => {
     sock.ev.on('connection.update', (update: any) => {
         const { connection, lastDisconnect, qr } = update;
         if (qr) qrcode.generate(qr, { small: true });
-
         if (connection === 'close') {
             const reason = new Boom((lastDisconnect?.error as any)?.message)?.output?.statusCode;
             if (reason === DisconnectReason.loggedOut) {
