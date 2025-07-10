@@ -6,7 +6,14 @@ export default abstract class Command implements CommandInstance {
     config: CommandConfig;
     amountTimes = 0;
 
-    constructor(zap: AtizapClient, config: CommandConfig) {
+    constructor(zap: AtizapClient, config: Required<CommandConfig>) {
+        const requiresGroup = config.groupAdmPermission.bot || config.groupAdmPermission.user;
+        if (requiresGroup && !config.groupOnly) {
+            throw new Error(
+                `O comando "${config.name}" exige permissões de admin (bot ou user), mas 'groupOnly' está como false.`
+            );
+        }
+
         this.zap = zap;
         this.config = config;
     }

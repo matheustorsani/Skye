@@ -2,6 +2,7 @@ import type AtizapClient from "../config/AtizapClient";
 import { sendOptions, Message } from "../config/Types";
 
 export function messageMeths(zap: AtizapClient, msg: Message) {
+    if (typeof msg.send === "function" && typeof msg.zapFail === "function" && typeof msg.isBotGroupAdmin === "function") return msg;
     const from: string = msg.key.remoteJid!;
 
     msg.from = from;
@@ -32,6 +33,14 @@ export function messageMeths(zap: AtizapClient, msg: Message) {
         await msg.send("Ops! Algo deu errado... :(\n\n```" + errorObj + "```", { reply: true });
         console.error(`Opa, erro no comando ${commandName}!\n${errorObj}`);
     };
+
+    msg.isBotGroupAdmin = async (botNumber: string): Promise<boolean> => {
+        if (!from.endsWith("@g.us")) return false;
+        const groupMetadata = await zap.atizap.groupMetadata(from);
+        return groupMetadata.participants.some((participant) => {
+            return participant.id === botNumber && participant.admin === "admin";
+        });
+    }
 
     return msg;
 }

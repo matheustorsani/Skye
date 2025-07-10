@@ -6,7 +6,7 @@ interface Grupo extends Document {
     prefix: string;
 }
 
-interface Usuario extends Document {
+export interface Usuario extends Document {
     _id: string;
     prefix: string;
     situation: {

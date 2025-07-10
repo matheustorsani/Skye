@@ -28,7 +28,6 @@ export default class ReloadCommand extends Command {
 
         const cmdName = args[0].toLowerCase();
         const existing = this.zap.commands.get(cmdName) || this.zap.aliases.get(cmdName);
-        console.log(existing)
         if (!existing) {
             return void message.send(`Comando "${cmdName}" não encontrado.`, { reply: true });
         }

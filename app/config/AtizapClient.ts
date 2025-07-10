@@ -14,6 +14,7 @@ export default class AtizapClient {
   aliases: Collection<string, CommandInstance>
   spinnies: Spinnies
 
+
   constructor(atizap: WASocket) {
     this.atizap = atizap
     this.commands = new Collection()
@@ -27,11 +28,20 @@ export default class AtizapClient {
     try {
       this.spinnies.add('events', { text: 'Loading events...' })
       const eventFiles = await glob.glob(events)
-      this.spinnies.succeed('events', { text: `${eventFiles.length} loaded events.` })
+      for (const file of eventFiles) {
+        const handlerModule = await import(path.resolve(file))
+        const handler = handlerModule.default || handlerModule
+        if (typeof handler === 'function') {
+          handler(this)
+          this.spinnies.update('events', { text: `Event ${file} loaded!` })
+        }
+      }
+      this.spinnies.succeed('events', { text: `${eventFiles.length} events loaded.` })
 
       this.spinnies.add('commands', { text: 'Loading commands...' })
       const cmdFiles = await glob.glob(commands)
 
+      let loadedCount = 0
       for (const fileCmd of cmdFiles) {
         if (fileCmd.endsWith('template.ts')) continue
 
@@ -41,13 +51,13 @@ export default class AtizapClient {
 
         this.commands.set(cmd.config.name, cmd)
         cmd.config.aliases.forEach(alias => {
-          this.aliases.set(alias, cmd)
-        })
+                  this.aliases.set(alias, cmd)
+                })
+        loadedCount++
       }
-      this.commands.delete('template')
-      // Para não contar o template como comando
-      this.spinnies.succeed('commands', { text: `${cmdFiles.length - 1} loaded commands.` })
-      this.spinnies.succeed('starting', { text: 'Bot is ready! :D' })
+
+      this.spinnies.succeed('commands', { text: `${loadedCount} commands loaded.` })
+      this.spinnies.succeed('starting', { text: 'Bot is ready! :D.' })
     } catch (err) {
       this.spinnies.fail('starting', { text: String(err) })
       throw err

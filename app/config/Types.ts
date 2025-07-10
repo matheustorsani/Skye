@@ -12,6 +12,7 @@ export interface sendOptions {
 export interface Message extends proto.IWebMessageInfo{
     send: (message: string, args?: sendOptions) => Promise<proto.WebMessageInfo | undefined>;
     zapFail: (err: Error, commandName: string) => Promise<void>;
+    isBotGroupAdmin: (botNumber: string) => Promise<boolean>;
     from: string
 }
 

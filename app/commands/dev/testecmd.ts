@@ -1,7 +1,7 @@
 import AtizapClient from "../../config/AtizapClient";
 import Command from "../../config/Command";
 import { CommandParams } from "../../config/Types";
-
+import config from "../../../config.json";
 export default class TestecmdCommand extends Command {
     constructor(zap: AtizapClient) {
         super(zap, {
@@ -12,7 +12,7 @@ export default class TestecmdCommand extends Command {
             example: "3",
             groupOnly: false,
             groupAdmPermission: {
-                bot: false,
+                bot: true,
                 user: false
             },
             ownerOnly: true,
@@ -21,6 +21,9 @@ export default class TestecmdCommand extends Command {
     }
 
     async execute({ message, args }: CommandParams): Promise<void> {
-        message.send("doksdokp")
+        const botNumber = this.zap.atizap.user?.id.replace(/:\d+/, "");
+        const from = message.from;
+        
+        //console.log("isBotGroupAdmin:", await isBotGroupAdmin());
     }
 }
