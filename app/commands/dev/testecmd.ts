@@ -2,7 +2,7 @@ import AtizapClient from "../../config/AtizapClient";
 import Command from "../../config/Command";
 import { CommandParams } from "../../config/Types";
 
-export default class TestCommand extends Command {
+export default class TestecmdCommand extends Command {
     constructor(zap: AtizapClient) {
         super(zap, {
             name: "testecmd",
