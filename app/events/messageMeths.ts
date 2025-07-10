@@ -5,13 +5,13 @@ export function messageMeths(zap: AtizapClient, msg: Message) {
     const from: string = msg.key.remoteJid!;
 
     msg.from = from;
-    
+
     msg.send = async (message: string, args: sendOptions = {}) => {
         try {
-            if (args.to) return await zap.atizap.sendMessage(args.to, { text: message }, { quoted: msg });
+            if (args.to) return await zap.atizap.sendMessage(args.to, { text: message });
             if (args.reply) return await zap.atizap.sendMessage(from, { text: message }, { quoted: msg });
-            if (args.imageUrl) return await zap.atizap.sendMessage(from, { image: { url: args.imageUrl }, caption: message });
-            if (args.videoUrl) return await zap.atizap.sendMessage(from, { video: { url: args.videoUrl }, caption: message });
+            if (args.imageUrl) return await zap.atizap.sendMessage(from, { image: { url: args.imageUrl }, caption: message }, { quoted: msg });
+            if (args.videoUrl) return await zap.atizap.sendMessage(from, { video: { url: args.videoUrl }, caption: message }, { quoted: msg });
             if (args.edit) {
                 const res = await zap.atizap.sendMessage(from, { text: message });
                 return await zap.atizap.sendMessage(from, { text: args.edit, edit: res!.key });

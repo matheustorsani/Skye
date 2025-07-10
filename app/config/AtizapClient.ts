@@ -5,44 +5,19 @@ import path from 'path'
 import Spinnies from 'spinnies'
 import { Database } from './modules/db/database'
 import config from '../../config.json';
-
-type CommandConfig = {
-  name: string
-  aliases: string[]
-  category: string
-  description: string
-  example: string
-  groupOnly: boolean
-  groupAdmPermission: {
-    bot: boolean
-    user: boolean
-  }
-  ownerOnly: boolean
-  isWorking: boolean
-  amountTimes: number
-}
-
-type CommandInstance = {
-  config: CommandConfig
-  execute: (...args: any[]) => Promise<void>
-}
-
-interface AtizapClientStartOptions {
-  events: string
-  commands: string
-}
+import { CommandInstance, AtizapClientStartOptions } from './Types'
 
 export default class AtizapClient {
   atizap: WASocket
   commands: Collection<string, CommandInstance>
   mongo = new Database(config.keys.mongouri)
-  aliases: Collection<string, string>
+  aliases: Collection<string, CommandInstance>
   spinnies: Spinnies
 
   constructor(atizap: WASocket) {
     this.atizap = atizap
     this.commands = new Collection()
-    this.aliases = new Collection()
+    this.aliases = new Collection<string, CommandInstance>()
     this.spinnies = new Spinnies({ color: 'red', succeedColor: 'blue' })
   }
 
@@ -75,8 +50,8 @@ export default class AtizapClient {
 
         this.commands.set(cmd.config.name, cmd)
         cmd.config.aliases.forEach(alias => {
-          this.aliases.set(alias, cmd.config.name)
-        })
+                  this.aliases.set(alias, cmd)
+                })
         loadedCount++
       }
 

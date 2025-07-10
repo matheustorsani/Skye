@@ -5,8 +5,8 @@ import { CommandParams } from "../../config/Types";
 export default class TestCommand extends Command {
     constructor(zap: AtizapClient) {
         super(zap, {
-            name: "test",
-            aliases: ["tetete"],
+            name: "testecmd",
+            aliases: ["tetete", "test", "t"],
             category: "dev",
             description: "232",
             example: "3",
@@ -21,8 +21,6 @@ export default class TestCommand extends Command {
     }
 
     async execute({ message, args }: CommandParams): Promise<void> {
-        const usuario = await this.zap.mongo.usuarios.findById("message.from");
-
-        console.log(usuario)
+        message.send("doksdokp")
     }
 }

@@ -1,49 +1,15 @@
 import AtizapClient from "./AtizapClient";
+import { CommandConfig, CommandInstance } from "./Types";
 
-interface options {
-    name: string;
-    aliases: string[];
-    category: string;
-    description: string;
-    example: string;
-    groupOnly: boolean;
-    groupAdmPermission: {
-        bot: boolean;
-        user: boolean;
-    };
-    ownerOnly: boolean;
-    isWorking: boolean;
-}
-
-export default class Command {
+export default abstract class Command implements CommandInstance {
     zap: AtizapClient;
-    config: Required<options>;
-    amountTimes: number;
+    config: CommandConfig;
+    amountTimes = 0;
 
-    constructor(zap: AtizapClient, options: options) {
+    constructor(zap: AtizapClient, config: CommandConfig) {
         this.zap = zap;
-
-        this.config = {
-            name: options.name,
-            aliases: options.aliases,
-            category: options.category,
-            description: options.description,
-            example: options.example,
-            groupOnly: options.groupOnly,
-            groupAdmPermission: {
-                bot: options.groupAdmPermission.bot,
-                user: options.groupAdmPermission.user
-            },
-            ownerOnly: options.ownerOnly,
-            isWorking: options.isWorking
-        };
-        this.amountTimes = 0;
+        this.config = config;
     }
 
-
-    getAllChats(): any {
-        this.zap.atizap.ev.on('chats.upsert', (chats) => {
-            return chats.map(chat => chat.id);
-        })
-    }
+    abstract execute(...args: any[]): Promise<void>;
 }

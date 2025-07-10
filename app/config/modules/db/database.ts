@@ -8,6 +8,12 @@ interface Grupo extends Document {
 interface Usuario extends Document {
     _id: string;
     prefix: string;
+    situation: {
+        ban: boolean;
+        reason?: string;
+        dateban?: string;
+    };
+    date: string;
 }
 
 export class Database {
@@ -31,6 +37,12 @@ export class Database {
         const usuarioSchema = new Schema<Usuario>({
             _id: { type: String, required: true },
             prefix: { type: String, default: '!' },
+            situation: {
+                ban: { type: Boolean, default: false },
+                reason: { type: String, default: undefined },
+                dateban: { type: String, default: undefined }
+            },
+            date: { type: String, default: (new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })) }
         });
 
         this.grupos = mongoose.model<Grupo>('groups', grupoSchema);
@@ -47,7 +59,14 @@ export class Database {
     newUserDoc(id: string): Usuario {
         return new this.usuarios({
             _id: id,
-            prefix: '!'
+            prefix: '!',
+            situation: {
+                ban: false,
+                reason: undefined,
+                dateban: undefined
+            },
+            date: new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })
+            // Adjusted to use the correct Date format
         });
     }
 }

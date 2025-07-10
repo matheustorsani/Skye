@@ -14,13 +14,17 @@ export default function handler(zap: AtizapClient) {
             if (!text || msg.key.fromMe) continue;
             const from = msg.key.remoteJid
             const user = msg.key.participant || from;
+            const message = messageMeths(zap, msg);
 
             const usuario = await zap.mongo.usuarios.findById(user);
+
             if (!usuario) await zap.mongo.newUserDoc(user).save()
                 .then(() => console.log("Usuário salvo no banco de dados:", user))
                 .catch((err) => console.error("Erro ao salvar usuário no banco de dados:", err));
+            else if (usuario.situation.ban)
+                return await message.send(`🚨 | Você está *banido* de me usar! D:\n\n_Motivo_: *${usuario.situation.reason}*\n_Data do banimento: ${usuario.situation.dateban}_`, { reply: true });
 
-            const message = messageMeths(zap, msg);
+
 
             if (!text.toLowerCase().startsWith(prefix)) {
                 if (!from.endsWith("@g.us") || text === `@${botNumber}`) {
@@ -48,16 +52,9 @@ export default function handler(zap: AtizapClient) {
             }
 
             const alias = zap.aliases.get(cmd);
-            const file = zap.commands.get(cmd) || (alias ? zap.commands.get(alias) : undefined);
+            const file = zap.commands.get(cmd) || (alias ? zap.commands.get(alias.config.name) : undefined);
             if (file) {
-                //if (cleaning) return await msg.reply(t('commands:cleaning'))
-                //if (config.discord.enable) catchcommand(msg)
-                //if (file.config.ownerOnly && !devsNumbers.includes(msg.getSenderNumber())) return msg.send(t('commands:nodev'))
-                //if (!file.config.isWorking && !devsNumbers.includes(msg.getSenderNumber())) return msg.send(t('commands:notworking'))
-                if (file.config.groupOnly && !from.includes('@g.us')) return await message.send("Este comando só pode ser usado em grupos!");
-                // if (file.config.groupAdmPermission.bot && !await msg.verifyAdm(0)) return await msg.send(t('commands:missingbotperm'))
-                // if (file.config.groupAdmPermission.user && !await msg.verifyAdm(1) && !devsNumbers.includes(msg.getSenderNumber())) return await msg.send(t('commands:missinguserperm'))
-                file.config.amountTimes++
+                file.amountTimes++;
                 try {
                     await file.execute({ message, args, prefix });
                 } catch (err: unknown) {

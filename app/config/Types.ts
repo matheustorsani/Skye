@@ -20,3 +20,30 @@ export interface CommandParams {
     args?: string[];
     prefix?: string;
 }
+
+
+export type CommandConfig = {
+  name: string
+  aliases: string[]
+  category: string
+  description: string
+  example: string
+  groupOnly: boolean
+  groupAdmPermission: {
+    bot: boolean
+    user: boolean
+  }
+  ownerOnly: boolean
+  isWorking: boolean
+}
+
+export type CommandInstance = {
+  config: CommandConfig
+  amountTimes: number
+  execute: (...args: any[]) => Promise<void>
+}
+
+export interface AtizapClientStartOptions {
+  events: string
+  commands: string
+}
