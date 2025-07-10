@@ -1,4 +1,5 @@
 import mongoose, { Document, Model, Schema } from 'mongoose';
+import chalk from "chalk";
 
 interface Grupo extends Document {
     _id: string;
@@ -23,10 +24,10 @@ export class Database {
     constructor(key: string) {
         mongoose.connect(key)
             .then(() => {
-                console.log("O bot está conectado ao banco de dados.");
-            })
-            .catch((err) => {
-                console.error("Erro ao conectar ao banco de dados:", err);
+                    console.log(`${chalk.green('✓')} ${chalk.blue('Conectado ao banco de dados!')}`);
+                })
+                .catch((err) => {
+                    console.error(`${chalk.red('❌')} ${chalk.gray('Não foi possivel conectar ao banco de dados.\n')}`, err);
             });
 
         const grupoSchema = new Schema<Grupo>({

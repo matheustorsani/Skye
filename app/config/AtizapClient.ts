@@ -18,29 +18,20 @@ export default class AtizapClient {
     this.atizap = atizap
     this.commands = new Collection()
     this.aliases = new Collection<string, CommandInstance>()
-    this.spinnies = new Spinnies({ color: 'red', succeedColor: 'blue' })
+    this.spinnies = new Spinnies({ color: 'gray', succeedColor: 'blue' })
   }
 
   async start({ events, commands }: AtizapClientStartOptions): Promise<void> {
-    this.spinnies.add('starting', { text: 'Iniciando o bot...' })
+    this.spinnies.add('starting', { text: 'Loading...' })
 
     try {
-      this.spinnies.add('events', { text: 'Carregando eventos...' })
+      this.spinnies.add('events', { text: 'Loading events...' })
       const eventFiles = await glob.glob(events)
-      for (const file of eventFiles) {
-        const handlerModule = await import(path.resolve(file))
-        const handler = handlerModule.default || handlerModule
-        if (typeof handler === 'function') {
-          handler(this)
-          this.spinnies.update('events', { text: `Evento ${file} carregado!` })
-        }
-      }
-      this.spinnies.succeed('events', { text: `${eventFiles.length} eventos carregados.` })
+      this.spinnies.succeed('events', { text: `${eventFiles.length} loaded events.` })
 
-      this.spinnies.add('commands', { text: 'Carregando comandos...' })
+      this.spinnies.add('commands', { text: 'Loading commands...' })
       const cmdFiles = await glob.glob(commands)
 
-      let loadedCount = 0
       for (const fileCmd of cmdFiles) {
         if (fileCmd.endsWith('template.ts')) continue
 
@@ -50,13 +41,13 @@ export default class AtizapClient {
 
         this.commands.set(cmd.config.name, cmd)
         cmd.config.aliases.forEach(alias => {
-                  this.aliases.set(alias, cmd)
-                })
-        loadedCount++
+          this.aliases.set(alias, cmd)
+        })
       }
-
-      this.spinnies.succeed('commands', { text: `${loadedCount} comandos carregados.` })
-      this.spinnies.succeed('starting', { text: 'Bot está pronto.' })
+      this.commands.delete('template')
+      // Para não contar o template como comando
+      this.spinnies.succeed('commands', { text: `${cmdFiles.length - 1} loaded commands.` })
+      this.spinnies.succeed('starting', { text: 'Bot is ready! :D' })
     } catch (err) {
       this.spinnies.fail('starting', { text: String(err) })
       throw err
