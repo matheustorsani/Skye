@@ -6,10 +6,11 @@ import { UserService } from "../services/UserService";
 import { PermissionService } from "../services/PermissionService";
 import { MessageParser } from "../services/MessageParser";
 
-export default function handler(zap: AtizapClient) {
-  const botNumber = zap.atizap.user?.id.replace(/:\d+/, "");
-  if (!botNumber) return console.error("Bot number not found.");
 
+export default function handler(zap: AtizapClient) {
+  const botNumber = zap.atizap.user?.id.replace(/:\d+/, "")!;
+  const botJid = zap.atizap.user?.lid?.split(":")[0]!;
+  if (!botNumber && !botJid) throw new Error("Bot number not found.");
   const userService = new UserService(zap);
   const permService = new PermissionService();
   const parser = new MessageParser();
@@ -20,9 +21,10 @@ export default function handler(zap: AtizapClient) {
     for (const msg of messages) {
       const { text } = extractInfo(msg);
       if (!text || msg.key.fromMe) continue;
-
       const from = msg.key.remoteJid ?? "";
-      const user = msg.key.participant || from;
+      const user = (msg.key.participant?.endsWith("@lid") ? msg.key.participant?.replace("@lid", "@s.whatsapp.net") : msg.key.participant) || from;
+
+
       if (typeof user !== "string") return;
       const message = messageMeths(zap, msg);
 
@@ -36,7 +38,7 @@ export default function handler(zap: AtizapClient) {
       }
 
       if (!text.toLowerCase().startsWith(config.bot.prefix)) {
-        if (!from.endsWith("@g.us") || text === `@${botNumber}`) {
+        if (!from.endsWith("@g.us") || text === `@${botJid}`) {
           return message.send(`Olá! Eu sou *${config.bot.name}*! 🤖\n\nMeu prefixo é: *${config.bot.prefix}*\n\nPara ver meus comandos, envie *${config.bot.prefix}ajuda* ou *${config.bot.prefix}help*.`, { reply: true })
         }
         return;

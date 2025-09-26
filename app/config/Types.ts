@@ -1,27 +1,29 @@
 import { proto } from "baileys";
 
 export interface sendOptions {
-    reply?: boolean;
-    imageUrl?: string;
-    videoUrl?: string;
-    sticker?: Buffer;
-    edit?: string;
-    delete?: boolean;
-    to?: string;
+  reply?: boolean;
+  imageUrl?: string;
+  videoUrl?: string;
+  sticker?: Buffer;
+  edit?: string;
+  delete?: boolean;
+  to?: string;
 }
 
 export type Message = proto.IWebMessageInfo & {
-    send: (message: string, args?: sendOptions) => Promise<proto.WebMessageInfo | undefined>;
-    zapFail: (err: Error, commandName: string) => Promise<void>;
-    isBotGroupAdmin: (botNumber: string) => Promise<boolean>;
-    from: string;
+  send: (message: string, args?: sendOptions) => Promise<proto.WebMessageInfo | undefined>;
+  sendSticker: (sticker: Buffer<ArrayBufferLike>) => Promise<proto.WebMessageInfo | undefined>;
+  reactMsg: (reaction: string) => Promise<proto.WebMessageInfo | undefined>;
+  zapFail: (err: Error, commandName: string) => Promise<void>;
+  isBotGroupAdmin: (botNumber: string) => Promise<boolean>;
+  from: string;
 };
 
 
 export interface CommandParams {
-    message: Message;
-    args?: string[];
-    prefix?: string;
+  message: Message;
+  args?: string[];
+  prefix?: string;
 }
 
 

@@ -4,7 +4,10 @@
     },
     "devs": {
         "contacts": {
-            "seuNome": "seuNumero"
+            "seuNome": [
+                "seu_numero_completo_sem_espaco_ou_simbolo [ex: 5511999998888]",
+                "seu_numero_em_@lid"
+            ]
         },
         "twitter": {
             "seuNome": "url_do_twitter"

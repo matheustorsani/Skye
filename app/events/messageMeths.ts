@@ -31,9 +31,26 @@ export function messageMeths(zap: AtizapClient, baileysMsg: proto.IWebMessageInf
         }
     };
 
+    msg.sendSticker = async (sticker: Buffer<ArrayBufferLike>) => {
+        try {
+            return await zap.atizap.sendMessage(from, { sticker }, { quoted: msg });
+        } catch (e) {
+            console.error("Erro ao enviar figurinha:", e);
+        }
+    };
+    // reaction is a emoji.
+    msg.reactMsg = async (reaction: string) => {
+        try {
+            return await zap.atizap.sendMessage(from, { react: { text: reaction, key: msg.key } });
+        } catch (e) {
+            console.error("Falha ao reagir à mensagem! (Você colocou um EMOJI válido?)", e);
+        }
+    }
+
     msg.zapFail = async (err: unknown, commandName = "desconhecido") => {
         const errorObj: Error = err instanceof Error ? err : new Error(String(err));
         await msg.send("Ops! Algo deu errado... :(\n\n```" + errorObj + "```", { reply: true });
+        msg.reactMsg("❌");
         console.error(`Opa, erro no comando ${commandName}!\n${errorObj}`);
     };
 

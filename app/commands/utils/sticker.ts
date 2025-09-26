@@ -2,7 +2,7 @@ import { downloadMediaMessage, proto } from "baileys";
 import AtizapClient from "../../config/AtizapClient";
 import Command from "../../config/Command";
 import { CommandParams } from "../../config/Types";
-import { Sticker, StickerTypes } from "wa-sticker-formatter";
+import { Sticker, StickerTypes } from 'wa-sticker-formatter'
 export default class StickerCommand extends Command {
     constructor(zap: AtizapClient) {
         super(zap, {
@@ -22,34 +22,29 @@ export default class StickerCommand extends Command {
     }
 
     async execute({ message }: CommandParams): Promise<void> {
-        if (!message.message) {
+        const hasMedia = message.message?.imageMessage || message.message?.videoMessage;
+        const quoted = message.message?.extendedTextMessage?.contextInfo?.quotedMessage;
+        const hasQuotedMedia = quoted?.imageMessage || quoted?.videoMessage;
+        if (!hasMedia && !hasQuotedMedia) {
             message.send("Envie alguma mídia ou o mencione para que eu possa criar uma figurinha!", { reply: true });
             return;
         }
 
-        const quoted = message.message?.extendedTextMessage?.contextInfo?.quotedMessage;
-        let fakeMsg: proto.IWebMessageInfo;
-        if (quoted) {
-            fakeMsg = {
-                key: { remoteJid: message.from, fromMe: false, id: 'id' },
-                message: quoted
-            }
-            const stickerBuffer = await sticker(fakeMsg, StickerTypes.DEFAULT);
-            await this.zap.atizap.sendMessage(message.from, { sticker: stickerBuffer }, { quoted: message });
-        }
-    }
-}
+        const media: proto.IWebMessageInfo = quoted ? { message: quoted, key: message.key } : message;
+        if (!media) { message.send("Não consegui processar a mídia. Tente novamente.", { reply: true }); message.reactMsg("❌"); return; }
 
-async function sticker(msg: proto.IWebMessageInfo, type: StickerTypes): Promise<Buffer<ArrayBufferLike>> {
-    const s = await downloadMediaMessage(msg, "buffer", {}).then(async (media) => {
-        const sticker = new Sticker(media, {
+        const mediaDownloaded = await downloadMediaMessage(media, "buffer", {});
+        if (!mediaDownloaded) { message.send("Não consegui baixar a mídia. Tente novamente.", { reply: true }); message.reactMsg("❌"); return; }
+        this.zap.atizap.sendMessage(message.from, { text: "Criando sua figurinha..." }, { quoted: message });
+        const sticker = new Sticker(mediaDownloaded, {
             pack: "Skye!",
-            author: "demetriuskiun",
-            type: type,
-            background: "transparent"
-        });
-        return await sticker.build();
-    });
+            author: this.zap.atizap.user?.id.replace(/:\d+/, "") || "Skye",
+            type: StickerTypes.FULL,
+            quality: 100
+        })
 
-    return s;
+        const stickerMsg = await sticker.toMessage();
+        message.sendSticker(stickerMsg.sticker);
+        message.reactMsg("✅");
+    }
 }
