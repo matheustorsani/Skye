@@ -10,7 +10,7 @@ import { CommandInstance, AtizapClientStartOptions } from './Types'
 export default class AtizapClient {
   atizap: WASocket
   commands: Collection<string, CommandInstance>
-  mongo = new Database(config.keys.mongouri)
+  mongo = new Database(config.keys.mongoUri)
   aliases: Collection<string, CommandInstance>
   spinnies: Spinnies
 
