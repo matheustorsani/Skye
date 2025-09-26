@@ -27,7 +27,7 @@ export class Database {
                     console.log(`${chalk.green('✓')} ${chalk.blue('Conectado ao banco de dados!')}`);
                 })
                 .catch((err) => {
-                    console.error(`${chalk.red('❌')} ${chalk.gray('Não foi possivel conectar ao banco de dados.\n')}`, err);
+                    console.error(`${chalk.red('❌')} ${chalk.gray('Não foi possível conectar ao banco de dados.\n')}`, err);
             });
 
         const grupoSchema = new Schema<Grupo>({
@@ -67,7 +67,6 @@ export class Database {
                 dateban: undefined
             },
             date: new Date().toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" })
-            // Adjusted to use the correct Date format
         });
     }
 }

@@ -20,6 +20,14 @@ Este bot foi originalmente feito em JavaScript usando **@open-wa/wa-automate**, 
 
 ---
 
+---
+
+## Dependências
+
+* [ffmpeg](https://www.ffmpeg.org)
+
+---
+
 ## Instalação
 
 1. Clone o repositório:
@@ -42,7 +50,7 @@ Renomeie o arquivo ```config-example.json``` para ```config.json``` e preencha o
    npm run dev
 ```
 
-*Você não precisa compilar o codigo para JavaScript, ajuste se necessario.*
+*Você não precisa compilar o código para JavaScript, ajuste se necessário.*
 
 Após o início, será exibido um QR Code no terminal. Escaneie com seu WhatsApp para conectar.
 

@@ -1,10 +1,12 @@
+import { proto } from "baileys";
 import type AtizapClient from "../config/AtizapClient";
 import { sendOptions, Message } from "../config/Types";
 
-export function messageMeths(zap: AtizapClient, msg: Message) {
-    if (typeof msg.send === "function" && typeof msg.zapFail === "function" && typeof msg.isBotGroupAdmin === "function") return msg;
-    const from: string = msg.key.remoteJid!;
+export function messageMeths(zap: AtizapClient, baileysMsg: proto.IWebMessageInfo): Message {
+    const from = baileysMsg.key.remoteJid;
+    if (!from) throw new Error("from está indefinido.");
 
+    const msg = baileysMsg as Message;
     msg.from = from;
 
     msg.send = async (message: string, args: sendOptions = {}) => {
@@ -21,6 +23,7 @@ export function messageMeths(zap: AtizapClient, msg: Message) {
                 const res = await zap.atizap.sendMessage(from, { text: message });
                 return await zap.atizap.sendMessage(from, { delete: res!.key });
             }
+            if (args.sticker) return zap.atizap.sendMessage(from, { sticker: args.sticker }, { quoted: msg });
 
             return await zap.atizap.sendMessage(from, { text: message });
         } catch (e) {

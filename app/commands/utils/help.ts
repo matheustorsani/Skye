@@ -26,7 +26,6 @@ export default class HelpCommand extends Command {
         const categoriasListadas = new Set<string>();
         const param = args?.[0]?.toLowerCase();
 
-        // Caso seja chamado sem argumentos
         if (!param) {
             helpText += 'Categorias disponíveis:\n\n';
         }
@@ -34,7 +33,6 @@ export default class HelpCommand extends Command {
         this.zap.commands.forEach(cmd => {
             if (!cmd.config.isWorking || cmd.config.category === 'dev' || cmd.config.ownerOnly) return;
 
-            // !help
             if (!param) {
                 if (!categoriasListadas.has(cmd.config.category)) {
                     helpText += `${prefix}ajuda *${cmd.config.category}*\n`;
@@ -43,7 +41,6 @@ export default class HelpCommand extends Command {
                 return;
             }
 
-            // !help geral
             if (param === 'geral' || param === 'all') {
                 if (!categoriasListadas.has(cmd.config.category)) {
                     helpText += `===============\n*Comandos da categoria: ${cmd.config.category}*\n===============\n`;

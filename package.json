@@ -27,9 +27,11 @@
     "long": "^4.0.0",
     "mongoose": "^8.16.1",
     "spinnies": "^0.5.1",
-    "string-similarity": "^4.0.4"
+    "string-similarity": "^4.0.4",
+    "wa-sticker-formatter": "^4.4.4"
   },
   "devDependencies": {
+    "@types/fluent-ffmpeg": "^2.1.27",
     "@types/node": "^24.0.5",
     "@types/qrcode-terminal": "^0.12.2",
     "@types/spinnies": "^0.5.3",

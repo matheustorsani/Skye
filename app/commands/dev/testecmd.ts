@@ -12,7 +12,7 @@ export default class TestecmdCommand extends Command {
             example: "3",
             groupOnly: false,
             groupAdmPermission: {
-                bot: true,
+                bot: false,
                 user: false
             },
             ownerOnly: true,
