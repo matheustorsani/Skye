@@ -4,10 +4,13 @@
     },
     "devs": {
         "contacts": {
-            "seunome": "seunumero"
+            "seuNome": "seuNumero"
         },
         "twitter": {
-            "seunome": "url_do_twitter"
+            "seuNome": "url_do_twitter"
         }
+    },
+    "keys": {
+        "mongoUri": "sua_mongoUri_aqui"
     }
 }

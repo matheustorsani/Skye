@@ -37,7 +37,7 @@ export default function handler(zap: AtizapClient) {
 
       if (!text.toLowerCase().startsWith(config.bot.prefix)) {
         if (!from.endsWith("@g.us") || text === `@${botNumber}`) {
-          return zap.atizap.sendMessage(from, { text: "Ola" });
+          return message.send(`Olá! Eu sou *${config.bot.name}*! 🤖\n\nMeu prefixo é: *${config.bot.prefix}*\n\nPara ver meus comandos, envie *${config.bot.prefix}ajuda* ou *${config.bot.prefix}help*.`, { reply: true })
         }
         return;
       }
